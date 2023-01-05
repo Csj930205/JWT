@@ -8,15 +8,12 @@ import com.example.jwttokentest2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -24,10 +21,8 @@ public class TokenUtil {
     private final UserService userService;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
-
     private final RedisRepository redisRepository;
 
-    private final RedisTemplate redisTemplate;
 
     /**
      * 로그인 검사
@@ -36,7 +31,6 @@ public class TokenUtil {
      * @return
      */
     public Map<String, Object> loginCheckToken(User user, HttpServletResponse response, HttpServletRequest request) {
-
         User userDetails = (User) userService.loadUserByUsername(user.getUserId());
         Map<String, Object> result = new HashMap<>();
 
@@ -94,7 +88,6 @@ public class TokenUtil {
     public Map<String, Object> logout(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
         String accessToken = jwtProvider.resolveAccessToken(request);
-        Authentication authentication = jwtProvider.getAuthentication(accessToken);
 
         if (accessToken == null || !(jwtProvider.validationToken(accessToken))) {
             result.put("result", "fail");
@@ -103,13 +96,6 @@ public class TokenUtil {
 
             return result;
         }
-
-        if (redisTemplate.opsForValue().get("auth:" + authentication.getPrincipal()) != null) {
-            redisTemplate.delete("auth:" + authentication.getPrincipal());
-        }
-
-        Long expiration = jwtProvider.getExpiration(accessToken);
-        redisTemplate.opsForValue().set(authentication.getPrincipal()+" : " + accessToken,"logout", expiration, TimeUnit.MILLISECONDS);
 
         result.put("result", "success");
         result.put("code", HttpStatus.OK);

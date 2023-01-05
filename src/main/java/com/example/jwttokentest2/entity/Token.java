@@ -14,7 +14,6 @@ import org.springframework.data.redis.core.index.Indexed;
 @Setter
 @NoArgsConstructor
 public class Token {
-
     @Id
     @Indexed
     private String key;

@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
@@ -21,11 +20,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtProvider {
     private String secretKey = "secretKey-test-authorization-jwt-manage-token";
-
     private long accessTokenTime = Duration.ofMinutes(30).toMillis();
-
     private long refreshTokenTime = Duration.ofDays(1).toMillis();
-
     private final UserService userService;
 
     /**

@@ -16,7 +16,6 @@ import java.util.Collections;
 @NoArgsConstructor
 @Data
 public class User implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
