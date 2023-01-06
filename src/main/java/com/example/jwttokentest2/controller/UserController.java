@@ -1,7 +1,6 @@
 package com.example.jwttokentest2.controller;
 
 import com.example.jwttokentest2.entity.User;
-import com.example.jwttokentest2.service.UserService;
 import com.example.jwttokentest2.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController

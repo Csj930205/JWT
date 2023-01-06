@@ -75,7 +75,7 @@ public class TokenUtil {
         } else {
             result.put("result", "fail");
             result.put("code", HttpStatus.BAD_REQUEST.value());
-            result.put("message", "accessToken이 만료되었거나 존재하지 않습니다");
+            result.put("message", "토큰이 만료되었거나 존재하지 않습니다");
         }
         return result;
     }
