@@ -2,6 +2,7 @@ package com.example.jwttokentest2.security.jwt;
 
 import com.example.jwttokentest2.entity.Token;
 import com.example.jwttokentest2.entity.User;
+import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.service.UserService;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
@@ -23,6 +24,8 @@ public class JwtProvider {
     private long accessTokenTime = Duration.ofMinutes(30).toMillis();
     private long refreshTokenTime = Duration.ofDays(1).toMillis();
     private final UserService userService;
+
+    private final RedisRepository redisRepository;
 
     /**
      * 객체 초기화 및 secretKey Base64 인코딩
@@ -112,7 +115,7 @@ public class JwtProvider {
      */
     public boolean validationToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             e.printStackTrace();

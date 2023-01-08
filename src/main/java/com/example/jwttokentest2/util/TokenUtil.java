@@ -65,14 +65,17 @@ public class TokenUtil {
      * @param request
      * @return
      */
-    public Map<String, Object> getToken(HttpServletRequest request) {
+    public Map<String, Object> getToken(HttpServletRequest request, HttpServletResponse response) {
         String token = jwtProvider.resolveAccessToken(request);
+
         Map<String, Object> result = new HashMap<>();
 
         if (token != null && jwtProvider.validationToken(token)) {
             result.put("result", "success");
             result.put("code", HttpStatus.OK.value());
         } else {
+
+
             result.put("result", "fail");
             result.put("code", HttpStatus.BAD_REQUEST.value());
             result.put("message", "토큰이 만료되었거나 존재하지 않습니다");
@@ -100,6 +103,22 @@ public class TokenUtil {
         result.put("result", "success");
         result.put("code", HttpStatus.OK);
 
+        return result;
+    }
+
+    public Map<String, Object> reIssue(String token, HttpServletResponse response) {
+        String userId = jwtProvider.getUserId(token);
+        User user = (User) userService.loadUserByUsername(userId);
+        Token refreshToken = redisRepository.findByKey(userId);
+        Map<String, Object> result = new HashMap<>();
+
+        if (refreshToken != null && jwtProvider.validationToken(refreshToken.getValue())) {
+            Token accessToken = jwtProvider.accessTokenCreate(user);
+            jwtProvider.setHeaderAccessToken(response, accessToken.getValue());
+        }
+        result.put("result", "success");
+        result.put("code", HttpStatus.OK.value());
+        result.put("message", "새로운 토크이 발급되었습니다.");
         return result;
     }
 }

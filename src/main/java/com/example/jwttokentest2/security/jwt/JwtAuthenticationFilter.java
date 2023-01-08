@@ -1,5 +1,7 @@
 package com.example.jwttokentest2.security.jwt;
 
+import com.example.jwttokentest2.entity.Token;
+import com.example.jwttokentest2.util.TokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +23,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null && jwtProvider.validationToken(token)) {
             setAuthentication(token);
+        } else {
+
         }
         filterChain.doFilter(request, response);
     }

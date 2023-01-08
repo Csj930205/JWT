@@ -51,8 +51,8 @@ public class UserController {
      * @return
      */
     @GetMapping("admin")
-    public ResponseEntity<Map<String, Object>> admin(HttpServletRequest request) {
-        Map<String, Object> result = tokenUtil.getToken(request);
+    public ResponseEntity<Map<String, Object>> admin(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = tokenUtil.getToken(request, response);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -63,8 +63,8 @@ public class UserController {
      * @return
      */
     @GetMapping("test")
-    public ResponseEntity<Map<String, Object>> test(HttpServletRequest request) {
-        Map<String, Object> result = tokenUtil.getToken(request);
+    public ResponseEntity<Map<String, Object>> test(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = tokenUtil.getToken(request, response);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
