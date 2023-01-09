@@ -31,15 +31,6 @@ class JwtTokenTest2ApplicationTests {
         String name = "최성준";
         String role = "ROLE_USER";
 
-
-        User user = User.builder()
-                .userId(id)
-                .userPw(pw)
-                .userEmail(email)
-                .userName(name)
-                .userRole(role)
-                .build();
-        userRepository.save(user);
     }
 
     @Test

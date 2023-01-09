@@ -2,6 +2,8 @@ package com.example.jwttokentest2.util;
 
 import com.example.jwttokentest2.entity.Token;
 import com.example.jwttokentest2.entity.User;
+import com.example.jwttokentest2.exception.CustomException;
+import com.example.jwttokentest2.exception.enums.ErrorCode;
 import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.security.jwt.JwtProvider;
 import com.example.jwttokentest2.service.UserService;
@@ -32,6 +34,9 @@ public class TokenUtil {
      */
     public Map<String, Object> loginCheckToken(User user, HttpServletResponse response, HttpServletRequest request) {
         User userDetails = (User) userService.loadUserByUsername(user.getUserId());
+        String token = jwtProvider.resolveAccessToken(request);
+        Token refreshTokenCheck = redisRepository.findByKey(user.getUserId());
+
         Map<String, Object> result = new HashMap<>();
 
         if ( !(passwordEncoder.matches(user.getUserPw(), userDetails.getPassword())) ) {
@@ -42,44 +47,22 @@ public class TokenUtil {
             return result;
         }
 
-        Token refreshTokenCheck = redisRepository.findByKey(user.getUserId());
-        if (refreshTokenCheck == null) {
-            Token refreshToken = jwtProvider.refreshTokenCreate(userDetails);
-            redisRepository.save(refreshToken);
-        }
-
-        String token = jwtProvider.resolveAccessToken(request);
         if (token == null) {
             Token accessToken = jwtProvider.accessTokenCreate(userDetails);
             jwtProvider.setHeaderAccessToken(response, accessToken.getValue());
         }
 
+        if (refreshTokenCheck == null) {
+            Token refreshToken = jwtProvider.refreshTokenCreate(userDetails);
+            redisRepository.save(refreshToken);
+
+        } else if (refreshTokenCheck!= null & !(jwtProvider.validationToken(refreshTokenCheck.getValue()))) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_REFRESH_TOKEN);
+        }
+
         result.put("result", "success");
         result.put("code", HttpStatus.OK.value());
 
-        return result;
-    }
-
-    /**
-     * 토큰 검사
-     * @param request
-     * @return
-     */
-    public Map<String, Object> getToken(HttpServletRequest request, HttpServletResponse response) {
-        String token = jwtProvider.resolveAccessToken(request);
-
-        Map<String, Object> result = new HashMap<>();
-
-        if (token != null && jwtProvider.validationToken(token)) {
-            result.put("result", "success");
-            result.put("code", HttpStatus.OK.value());
-        } else {
-
-
-            result.put("result", "fail");
-            result.put("code", HttpStatus.BAD_REQUEST.value());
-            result.put("message", "토큰이 만료되었거나 존재하지 않습니다");
-        }
         return result;
     }
 

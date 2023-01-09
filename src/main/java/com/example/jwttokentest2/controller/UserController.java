@@ -7,11 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -26,7 +24,7 @@ public class UserController {
      * @param response
      * @return
      */
-    @GetMapping("login")
+    @PostMapping("login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody User user, HttpServletResponse response, HttpServletRequest request)  {
         Map<String, Object> result = tokenUtil.loginCheckToken(user, response, request);
 
@@ -38,7 +36,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("logout")
+    @PostMapping("logout")
     public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
         Map<String, Object> result = tokenUtil.logout(request);
 
@@ -47,24 +45,26 @@ public class UserController {
 
     /**
      * Security Test(권한 : ROLE_ADMIN)
-     * @param request
      * @return
      */
     @GetMapping("admin")
-    public ResponseEntity<Map<String, Object>> admin(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> result = tokenUtil.getToken(request, response);
+    public ResponseEntity<Map<String, Object>> admin() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", "success");
+        result.put("code", HttpStatus.OK.value());
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**
      * Security Test(권한 : ROLE_ADMIN , ROLE_USER)
-     * @param request
      * @return
      */
     @GetMapping("test")
-    public ResponseEntity<Map<String, Object>> test(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> result = tokenUtil.getToken(request, response);
+    public ResponseEntity<Map<String, Object>> test() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", "success");
+        result.put("code", HttpStatus.OK.value());
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

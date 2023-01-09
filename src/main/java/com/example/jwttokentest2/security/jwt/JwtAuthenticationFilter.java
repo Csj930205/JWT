@@ -1,7 +1,8 @@
 package com.example.jwttokentest2.security.jwt;
 
-import com.example.jwttokentest2.entity.Token;
-import com.example.jwttokentest2.util.TokenUtil;
+import com.example.jwttokentest2.exception.CustomException;
+import com.example.jwttokentest2.exception.enums.ErrorCode;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,13 +21,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = jwtProvider.resolveAccessToken(request);
-
-        if (token != null && jwtProvider.validationToken(token)) {
-            setAuthentication(token);
-        } else {
-
+        try {
+            if (token != null && jwtProvider.validationToken(token)) {
+                setAuthentication(token);
+            }
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS_TOKEN);
         }
-        filterChain.doFilter(request, response);
+
     }
 
     /**

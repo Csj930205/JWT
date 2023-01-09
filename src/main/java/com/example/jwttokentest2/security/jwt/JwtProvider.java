@@ -2,6 +2,8 @@ package com.example.jwttokentest2.security.jwt;
 
 import com.example.jwttokentest2.entity.Token;
 import com.example.jwttokentest2.entity.User;
+import com.example.jwttokentest2.exception.CustomException;
+import com.example.jwttokentest2.exception.enums.ErrorCode;
 import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.service.UserService;
 import io.jsonwebtoken.*;
@@ -21,8 +23,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtProvider {
     private String secretKey = "secretKey-test-authorization-jwt-manage-token";
-    private long accessTokenTime = Duration.ofMinutes(30).toMillis();
-    private long refreshTokenTime = Duration.ofDays(1).toMillis();
+    private long accessTokenTime = 60 * 1 * 1000L; // 30분
+    private long refreshTokenTime = 60 * 200 * 1000L; // 7일
     private final UserService userService;
 
     private final RedisRepository redisRepository;
@@ -115,16 +117,9 @@ public class JwtProvider {
      */
     public boolean validationToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException | MalformedJwtException e) {
-            e.printStackTrace();
-            return false;
-        } catch (UnsupportedJwtException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
             return false;
         }
     }
