@@ -33,12 +33,13 @@ public class UserController {
 
     /**
      * 로그아웃 요청 처리
-     * @param request
      * @return
      */
     @PostMapping("logout")
-    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
-        Map<String, Object> result = tokenUtil.logout(request);
+    public ResponseEntity<Map<String, Object>> logout() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", "success");
+        result.put("code", HttpStatus.OK.value());
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -62,6 +63,15 @@ public class UserController {
      */
     @GetMapping("test")
     public ResponseEntity<Map<String, Object>> test() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", "success");
+        result.put("code", HttpStatus.OK.value());
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("reIssue")
+    public ResponseEntity<Map<String, Object>> tokenReIssue() {
         Map<String, Object> result = new HashMap<>();
         result.put("result", "success");
         result.put("code", HttpStatus.OK.value());

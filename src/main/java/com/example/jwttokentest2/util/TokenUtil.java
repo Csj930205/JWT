@@ -61,29 +61,6 @@ public class TokenUtil {
         return result;
     }
 
-    /**
-     * 로그아웃(구현중)
-     * @param request
-     * @return
-     */
-    public Map<String, Object> logout(HttpServletRequest request) {
-        Map<String, Object> result = new HashMap<>();
-        String accessToken = jwtProvider.resolveAccessToken(request);
-
-        if (accessToken == null || !(jwtProvider.validationToken(accessToken))) {
-            result.put("result", "fail");
-            result.put("code", HttpStatus.BAD_REQUEST.value());
-            result.put("message", "토큰이 없거나 만료되었습니다.");
-
-            return result;
-        }
-
-        result.put("result", "success");
-        result.put("code", HttpStatus.OK);
-
-        return result;
-    }
-
     public Map<String, Object> reIssue(String token, HttpServletResponse response) {
         String userId = jwtProvider.getUserId(token);
         User user = (User) userService.loadUserByUsername(userId);

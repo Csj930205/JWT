@@ -5,6 +5,7 @@ import com.example.jwttokentest2.entity.User;
 import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.service.UserService;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -120,6 +121,8 @@ public class JwtProvider {
             throw new JwtException("토큰 기한이 만료되었습니다. 재발급 신청을 해주세요.");
         } catch (MalformedJwtException e) {
             throw new JwtException("유효하지 않은 토큰입니다. 다시 확인해 주세요.");
+        } catch (SignatureException e) {
+            throw new JwtException("토큰값이 잘못되었습니다. 다시 확인해주세요.");
         }
     }
 
