@@ -1,6 +1,7 @@
 package com.example.jwttokentest2.security.cofig;
 
 import com.example.jwttokentest2.security.jwt.JwtAuthenticationFilter;
+import com.example.jwttokentest2.security.jwt.JwtExceptionFilter;
 import com.example.jwttokentest2.security.jwt.JwtProvider;
 import com.example.jwttokentest2.service.UserService;
 import com.example.jwttokentest2.util.TokenUtil;
@@ -23,6 +24,10 @@ public class SecurityConfig {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -51,8 +56,11 @@ public class SecurityConfig {
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
+        http.addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(jwtExceptionFilter,
+                        JwtAuthenticationFilter.class);
 
         return http.build();
     }

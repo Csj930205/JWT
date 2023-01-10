@@ -2,8 +2,6 @@ package com.example.jwttokentest2.util;
 
 import com.example.jwttokentest2.entity.Token;
 import com.example.jwttokentest2.entity.User;
-import com.example.jwttokentest2.exception.CustomException;
-import com.example.jwttokentest2.exception.enums.ErrorCode;
 import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.security.jwt.JwtProvider;
 import com.example.jwttokentest2.service.UserService;
@@ -55,9 +53,6 @@ public class TokenUtil {
         if (refreshTokenCheck == null) {
             Token refreshToken = jwtProvider.refreshTokenCreate(userDetails);
             redisRepository.save(refreshToken);
-
-        } else if (refreshTokenCheck!= null & !(jwtProvider.validationToken(refreshTokenCheck.getValue()))) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_REFRESH_TOKEN);
         }
 
         result.put("result", "success");

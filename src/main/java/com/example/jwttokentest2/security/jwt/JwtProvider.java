@@ -2,8 +2,6 @@ package com.example.jwttokentest2.security.jwt;
 
 import com.example.jwttokentest2.entity.Token;
 import com.example.jwttokentest2.entity.User;
-import com.example.jwttokentest2.exception.CustomException;
-import com.example.jwttokentest2.exception.enums.ErrorCode;
 import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.service.UserService;
 import io.jsonwebtoken.*;
@@ -16,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
-import java.time.Duration;
 import java.util.Date;
 
 @Component
@@ -24,7 +21,7 @@ import java.util.Date;
 public class JwtProvider {
     private String secretKey = "secretKey-test-authorization-jwt-manage-token";
     private long accessTokenTime = 60 * 1 * 1000L; // 30분
-    private long refreshTokenTime = 60 * 200 * 1000L; // 7일
+    private long refreshTokenTime = 60 * 60 * 24 * 7 * 1000L; // 7일
     private final UserService userService;
 
     private final RedisRepository redisRepository;
@@ -117,10 +114,12 @@ public class JwtProvider {
      */
     public boolean validationToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            return true;
-        } catch (RuntimeException e) {
-            return false;
+            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return !claimsJws.getBody().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            throw new JwtException("토큰 기한이 만료되었습니다. 재발급 신청을 해주세요.");
+        } catch (MalformedJwtException e) {
+            throw new JwtException("유효하지 않은 토큰입니다. 다시 확인해 주세요.");
         }
     }
 
