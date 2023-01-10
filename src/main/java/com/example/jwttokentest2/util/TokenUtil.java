@@ -7,6 +7,7 @@ import com.example.jwttokentest2.security.jwt.JwtProvider;
 import com.example.jwttokentest2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +31,7 @@ public class TokenUtil {
      * @param response
      * @return
      */
+    @Transactional
     public Map<String, Object> loginCheckToken(User user, HttpServletResponse response, HttpServletRequest request) {
         User userDetails = (User) userService.loadUserByUsername(user.getUserId());
         String token = jwtProvider.resolveAccessToken(request);
@@ -61,16 +63,31 @@ public class TokenUtil {
         return result;
     }
 
-    public Map<String, Object> reIssue(String token, HttpServletResponse response) {
+    /**
+     * Token 재발급
+     * @param request
+     * @param response
+     * @return
+     */
+    @Transactional
+    public Map<String, Object> reIssue(HttpServletRequest request, HttpServletResponse response) {
+
+        String token = jwtProvider.resolveAccessToken(request);
         String userId = jwtProvider.getUserId(token);
         User user = (User) userService.loadUserByUsername(userId);
         Token refreshToken = redisRepository.findByKey(userId);
-        Map<String, Object> result = new HashMap<>();
 
-        if (refreshToken != null && jwtProvider.validationToken(refreshToken.getValue())) {
-            Token accessToken = jwtProvider.accessTokenCreate(user);
-            jwtProvider.setHeaderAccessToken(response, accessToken.getValue());
+        if ( jwtProvider.validationToken(refreshToken.getValue()) ) {
+            Token newAccessToken = jwtProvider.accessTokenCreate(user);
+            jwtProvider.setHeaderAccessToken(response, newAccessToken.getValue());
+        } else {
+            Token newAccessToken = jwtProvider.accessTokenCreate(user);
+            Token newRefreshToken = jwtProvider.refreshTokenCreate(user);
+            jwtProvider.setHeaderAccessToken(response, newAccessToken.getValue());
+            redisRepository.save(newRefreshToken);
         }
+
+        Map<String, Object> result = new HashMap<>();
         result.put("result", "success");
         result.put("code", HttpStatus.OK.value());
         result.put("message", "새로운 토크이 발급되었습니다.");

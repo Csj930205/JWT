@@ -70,11 +70,13 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * 토큰 재발급
+     * @return
+     */
     @PostMapping("reIssue")
-    public ResponseEntity<Map<String, Object>> tokenReIssue() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("result", "success");
-        result.put("code", HttpStatus.OK.value());
+    public ResponseEntity<Map<String, Object>> tokenReIssue(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = tokenUtil.reIssue(request, response);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
