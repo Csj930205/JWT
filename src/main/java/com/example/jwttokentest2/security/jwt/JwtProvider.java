@@ -110,6 +110,8 @@ public class JwtProvider {
             return null;
         } catch (IllegalArgumentException e) {
             throw new JwtException("토큰이 정보가 유효하지 않습니다.");
+        }catch (NullPointerException e) {
+            throw new JwtException("유효하지 않은 토큰입니다. 다시 확인해 주세요.");
         }
     }
 
@@ -137,6 +139,8 @@ public class JwtProvider {
             throw new JwtException("유효하지 않은 토큰입니다. 다시 확인해 주세요.");
         } catch (SignatureException e) {
             throw new JwtException("토큰값이 잘못되었습니다. 다시 확인해주세요.");
+        } catch (NullPointerException e) {
+            throw new JwtException("유효하지 않은 토큰입니다. 다시 확인해 주세요.");
         }
     }
 
@@ -151,6 +155,12 @@ public class JwtProvider {
             return !claimsJws.getBody().getExpiration().before(new Date());
         } catch (ExpiredJwtException e) {
             throw new JwtException("Refresh-Token 기한이 만료되었습니다. 재발급 신청을 해주세요");
+        } catch (IllegalArgumentException e) {
+            throw new JwtException("유효하지 않은 토큰입니다. 다시 확인해 주세요.");
+        } catch (SignatureException e) {
+            throw new JwtException("토큰값이 잘못되었습니다. 다시 확인해주세요.");
+        } catch (NullPointerException e) {
+            throw new JwtException("유효하지 않은 토큰입니다. 다시 확인해 주세요.");
         }
     }
 

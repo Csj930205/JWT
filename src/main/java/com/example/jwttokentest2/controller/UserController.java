@@ -90,8 +90,8 @@ public class UserController {
      * @throws JsonProcessingException
      */
     @PostMapping("/reissue/refresh")
-    public ResponseEntity<Map<String, Object>> reIssueRefreshToken(HttpServletRequest request) {
-        Map<String ,Object> result = tokenUtil.reIssueRefreshToken(request);
+    public ResponseEntity<Map<String, Object>> reIssueRefreshToken(HttpServletRequest request, HttpServletResponse response) {
+        Map<String ,Object> result = tokenUtil.reIssueRefreshToken(request, response);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * SecurityContext 에 Authentication 저장
      * @param token
      */
-    private void setAuthentication(String token) throws JsonProcessingException {
+    private void setAuthentication(String token) {
         Authentication authentication = jwtProvider.getAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }

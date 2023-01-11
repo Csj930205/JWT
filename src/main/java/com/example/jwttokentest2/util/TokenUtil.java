@@ -107,15 +107,17 @@ public class TokenUtil {
      * @param request
      * @return
      */
-    public Map<String, Object> reIssueRefreshToken(HttpServletRequest request) {
+    public Map<String, Object> reIssueRefreshToken(HttpServletRequest request, HttpServletResponse response) {
         String token = jwtProvider.resolveAccessToken(request);
         String userId = jwtProvider.getPayloadByToken(token).get("sub");
         User user = (User) userService.loadUserByUsername(userId);
 
         jwtProvider.deleteRefreshToken(userId);
         Token newRefreshToken = jwtProvider.refreshTokenCreate(user);
-        redisRepository.save(newRefreshToken);
+        Token newAccessToken = jwtProvider.accessTokenCreate(user);
 
+        redisRepository.save(newRefreshToken);
+        jwtProvider.setHeaderAccessToken(response, newAccessToken.getValue());
 
         Map<String, Object> result = new HashMap<>();
         result.put("result", "success");
