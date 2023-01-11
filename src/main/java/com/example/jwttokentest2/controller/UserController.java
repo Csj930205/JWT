@@ -2,6 +2,7 @@ package com.example.jwttokentest2.controller;
 
 import com.example.jwttokentest2.entity.User;
 import com.example.jwttokentest2.util.TokenUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +36,9 @@ public class UserController {
      * 로그아웃 요청 처리
      * @return
      */
-    @PostMapping("logout")
-    public ResponseEntity<Map<String, Object>> logout() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("result", "success");
-        result.put("code", HttpStatus.OK.value());
+    @GetMapping("logout")
+    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
+        Map<String, Object> result = tokenUtil.logout(request);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -71,12 +70,28 @@ public class UserController {
     }
 
     /**
-     * 토큰 재발급
+     * 토큰 재발급(Access-Token)
+     * @param request
+     * @param response
      * @return
+     * @throws JsonProcessingException
      */
-    @PostMapping("reIssue")
-    public ResponseEntity<Map<String, Object>> tokenReIssue(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> result = tokenUtil.reIssue(request, response);
+    @PostMapping("/reissue/access")
+    public ResponseEntity<Map<String, Object>> reIssueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = tokenUtil.reIssueAccessToken(request, response);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * 토큰 재발급(Refresh-Token)
+     * @param request
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PostMapping("/reissue/refresh")
+    public ResponseEntity<Map<String, Object>> reIssueRefreshToken(HttpServletRequest request) {
+        Map<String ,Object> result = tokenUtil.reIssueRefreshToken(request);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

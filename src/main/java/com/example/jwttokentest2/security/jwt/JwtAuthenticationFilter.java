@@ -1,5 +1,7 @@
 package com.example.jwttokentest2.security.jwt;
 
+import com.example.jwttokentest2.entity.Token;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -28,24 +30,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtProvider.resolveAccessToken(request);
         String path = request.getServletPath();
 
-        if (path.startsWith("/api/reIssue")) {
-            filterChain.doFilter(request, response);
-        } else if (token != null && jwtProvider.validationToken(token)) {
-            setAuthentication(token);
-            filterChain.doFilter(request, response);
+        if (token != null) {
+            String userId = jwtProvider.getPayloadByToken(token).get("sub");
+            Token refreshToken = jwtProvider.getRefreshToken(userId);
+            if (refreshToken != null && path.startsWith("/api/reissue/refresh")) {
+                filterChain.doFilter(request, response);
+            } else {
+                if ( jwtProvider.refreshTokenValidation(refreshToken.getValue()) ) {
+                    if (path.startsWith("/api/reissue/access")) {
+                        filterChain.doFilter(request, response);
+                    } else if ( token != null && jwtProvider.accessTokenValidationToken(token)) {
+                        setAuthentication(token);
+                        filterChain.doFilter(request, response);
+                    }
+                }
+            }
         } else {
             filterChain.doFilter(request, response);
         }
-    }
+}
 
     /**
      * SecurityContext 에 Authentication 저장
      * @param token
      */
-    private void setAuthentication(String token) {
+    private void setAuthentication(String token) throws JsonProcessingException {
         Authentication authentication = jwtProvider.getAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
-
-
 }

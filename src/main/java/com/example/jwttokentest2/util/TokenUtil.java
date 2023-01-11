@@ -5,6 +5,8 @@ import com.example.jwttokentest2.entity.User;
 import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.security.jwt.JwtProvider;
 import com.example.jwttokentest2.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -34,8 +36,8 @@ public class TokenUtil {
     @Transactional
     public Map<String, Object> loginCheckToken(User user, HttpServletResponse response, HttpServletRequest request) {
         User userDetails = (User) userService.loadUserByUsername(user.getUserId());
-        String token = jwtProvider.resolveAccessToken(request);
-        Token refreshTokenCheck = redisRepository.findByKey(user.getUserId());
+        String getToken = jwtProvider.resolveAccessToken(request);
+        Token getRefreshToken = jwtProvider.getRefreshToken(userDetails.getUserId());
 
         Map<String, Object> result = new HashMap<>();
 
@@ -47,12 +49,12 @@ public class TokenUtil {
             return result;
         }
 
-        if (token == null) {
+        if ( getToken == null ) {
             Token accessToken = jwtProvider.accessTokenCreate(userDetails);
             jwtProvider.setHeaderAccessToken(response, accessToken.getValue());
         }
 
-        if (refreshTokenCheck == null) {
+        if ( getRefreshToken == null ) {
             Token refreshToken = jwtProvider.refreshTokenCreate(userDetails);
             redisRepository.save(refreshToken);
         }
@@ -64,33 +66,63 @@ public class TokenUtil {
     }
 
     /**
-     * Token 재발급
+     * 로그아웃 시 redis refresh-Token 삭제
+     * @param request
+     * @return
+     */
+    public Map<String, Object> logout(HttpServletRequest request) {
+        String getToken = jwtProvider.resolveAccessToken(request);
+        String userId = jwtProvider.getPayloadByToken(getToken).get("sub");
+        jwtProvider.deleteRefreshToken(userId);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", "success");
+        result.put("code", HttpStatus.OK.value());
+        return result;
+    }
+
+    /**
+     * Token 재발급(Access-Token)
      * @param request
      * @param response
      * @return
      */
-    @Transactional
-    public Map<String, Object> reIssue(HttpServletRequest request, HttpServletResponse response) {
-
+    public Map<String, Object> reIssueAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String token = jwtProvider.resolveAccessToken(request);
-        String userId = jwtProvider.getUserId(token);
+        String userId = jwtProvider.getPayloadByToken(token).get("sub");
         User user = (User) userService.loadUserByUsername(userId);
-        Token refreshToken = redisRepository.findByKey(userId);
 
-        if ( jwtProvider.validationToken(refreshToken.getValue()) ) {
-            Token newAccessToken = jwtProvider.accessTokenCreate(user);
-            jwtProvider.setHeaderAccessToken(response, newAccessToken.getValue());
-        } else {
-            Token newAccessToken = jwtProvider.accessTokenCreate(user);
-            Token newRefreshToken = jwtProvider.refreshTokenCreate(user);
-            jwtProvider.setHeaderAccessToken(response, newAccessToken.getValue());
-            redisRepository.save(newRefreshToken);
-        }
+        Token newAccessToken = jwtProvider.accessTokenCreate(user);
+        jwtProvider.setHeaderAccessToken(response, newAccessToken.getValue());
 
         Map<String, Object> result = new HashMap<>();
         result.put("result", "success");
         result.put("code", HttpStatus.OK.value());
         result.put("message", "새로운 토크이 발급되었습니다.");
         return result;
+    }
+
+    /**
+     * Token 재발급(Refresh-Token)
+     * @param request
+     * @return
+     */
+    public Map<String, Object> reIssueRefreshToken(HttpServletRequest request) {
+        String token = jwtProvider.resolveAccessToken(request);
+        String userId = jwtProvider.getPayloadByToken(token).get("sub");
+        User user = (User) userService.loadUserByUsername(userId);
+
+        jwtProvider.deleteRefreshToken(userId);
+        Token newRefreshToken = jwtProvider.refreshTokenCreate(user);
+        redisRepository.save(newRefreshToken);
+
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", "success");
+        result.put("code", HttpStatus.OK.value());
+        result.put("message", "새로운 토크이 발급되었습니다.");
+
+        return result;
+
     }
 }
