@@ -2,9 +2,6 @@ package com.example.jwttokentest2.security.cofig;
 
 import com.example.jwttokentest2.security.jwt.JwtAuthenticationFilter;
 import com.example.jwttokentest2.security.jwt.JwtExceptionFilter;
-import com.example.jwttokentest2.security.jwt.JwtProvider;
-import com.example.jwttokentest2.service.UserService;
-import com.example.jwttokentest2.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final UserService userService;
-    private final JwtProvider jwtProvider;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 

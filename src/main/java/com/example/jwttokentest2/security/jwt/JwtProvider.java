@@ -18,7 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -116,7 +115,7 @@ public class JwtProvider {
     }
 
     /**
-     * request의 헤더에서 토큰 추출
+     * request 의 헤더에서 토큰 추출
      * @param request
      * @return
      */

@@ -5,8 +5,6 @@ import com.example.jwttokentest2.entity.User;
 import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.security.jwt.JwtProvider;
 import com.example.jwttokentest2.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
