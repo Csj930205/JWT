@@ -23,6 +23,7 @@ public class UserController {
      * 로그인 요청 처리
      * @param user
      * @param response
+     * @param request
      * @return
      */
     @PostMapping("login")
@@ -37,7 +38,7 @@ public class UserController {
      * @return
      */
     @GetMapping("logout")
-    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> logout() {
         Map<String, Object> result = new HashMap<>();
 
         result.put("result", "success");
@@ -77,7 +78,6 @@ public class UserController {
      * @param request
      * @param response
      * @return
-     * @throws JsonProcessingException
      */
     @PostMapping("/reissue/access")
     public ResponseEntity<Map<String, Object>> reIssueAccessToken(HttpServletRequest request, HttpServletResponse response) {
@@ -90,7 +90,6 @@ public class UserController {
      * 토큰 재발급(Refresh-Token)
      * @param request
      * @return
-     * @throws JsonProcessingException
      */
     @PostMapping("/reissue/refresh")
     public ResponseEntity<Map<String, Object>> reIssueRefreshToken(HttpServletRequest request, HttpServletResponse response) {

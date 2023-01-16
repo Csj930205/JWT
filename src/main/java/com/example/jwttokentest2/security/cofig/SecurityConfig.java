@@ -23,16 +23,32 @@ public class SecurityConfig {
 
     private final JwtExceptionFilter jwtExceptionFilter;
 
+    /**
+     * 비밀번호 암호화
+     * @return
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * 인증을 처리하는 인터페이스
+     * @param authenticationConfiguration
+     * @return
+     * @throws Exception
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Security 설정
+     * @param http
+     * @return
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.httpBasic().disable();

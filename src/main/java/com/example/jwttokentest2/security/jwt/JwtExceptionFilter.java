@@ -19,7 +19,7 @@ import java.util.Map;
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
     /**
-     * JWT 관련 오류 필터
+     * JWT 관련 예외처리 필터
      * @param request
      * @param response
      * @param filterChain
