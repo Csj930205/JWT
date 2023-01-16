@@ -64,22 +64,6 @@ public class TokenUtil {
     }
 
     /**
-     * 로그아웃 시 redis refresh-Token 삭제
-     * @param request
-     * @return
-     */
-    public Map<String, Object> logout(HttpServletRequest request) {
-        String getToken = jwtProvider.resolveAccessToken(request);
-        String userId = jwtProvider.getPayloadByToken(getToken).get("sub");
-        jwtProvider.deleteRefreshToken(userId);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("result", "success");
-        result.put("code", HttpStatus.OK.value());
-        return result;
-    }
-
-    /**
      * Token 재발급(Access-Token)
      * @param request
      * @param response

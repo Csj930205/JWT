@@ -38,7 +38,10 @@ public class UserController {
      */
     @GetMapping("logout")
     public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
-        Map<String, Object> result = tokenUtil.logout(request);
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("result", "success");
+        result.put("code", HttpStatus.OK.value());
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
