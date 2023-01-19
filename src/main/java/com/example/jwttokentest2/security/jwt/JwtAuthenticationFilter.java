@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if ( jwtProvider.refreshTokenValidation(refreshToken.getValue()) ) {
                     if (path.startsWith("/api/reissue/access")) {
                         filterChain.doFilter(request, response);
-                    } else if ( token != null && jwtProvider.accessTokenValidationToken(token)) {
+                    } else if ( jwtProvider.accessTokenValidationToken(token)) {
                         setAuthentication(token);
                         filterChain.doFilter(request, response);
                     }

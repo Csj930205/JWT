@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class JwtProvider {
     private String secretKey = "secretKey-test-authorization-jwt-manage-token";
     private long accessTokenTime = 60 * 30 * 1000L; // 30분
-    private long refreshTokenTime = 60 * 60 * 24 * 7 * 1000L; // 7일
+    private long refreshTokenTime = 60 * 60 * 7  * 1000L; // 7일
     private final UserService userService;
     private final RedisRepository redisRepository;
 
@@ -178,8 +178,7 @@ public class JwtProvider {
      * @return
      */
     public Token getRefreshToken(String userId) {
-        Token refreshToken = redisRepository.findByKey(userId);
-        return refreshToken;
+        return redisRepository.findByKey(userId);
     }
 
     /**

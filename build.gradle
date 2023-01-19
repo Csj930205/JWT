@@ -19,20 +19,38 @@ repositories {
 }
 
 dependencies {
+
+    /* JPA */
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    /* Thymeleaf */
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    /* Web */
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    /* Security */
     implementation 'org.springframework.boot:spring-boot-starter-security:3.0.1'
+
+    /* Redis */
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.0.1'
+
+    /* Commons */
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 
+    /* JJWT */
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    /* Lombok */
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+
+    /* MySql */
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    /* Test */
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

@@ -1,5 +1,6 @@
 package com.example.jwttokentest2;
 
+import com.example.jwttokentest2.entity.User;
 import com.example.jwttokentest2.repository.RedisRepository;
 import com.example.jwttokentest2.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -23,12 +24,21 @@ class JwtTokenTest2ApplicationTests {
 
     @Test
     void userInsert() {
-        String id = "tjdwns132";
+        String id = "tjdwns92";
         String pw = new BCryptPasswordEncoder().encode("1234");
         String email = "sjchoi@naver.com";
-        String name = "최성준";
-        String role = "ROLE_USER";
+        String name = "소셜";
+        String role = "ROLE_SOCIAL";
 
+        User user = User.builder()
+                .userId(id)
+                .userPw(pw)
+                .userEmail(email)
+                .userName(name)
+                .userRole(role)
+                .build();
+
+        userRepository.save(user);
     }
 
     @Test
