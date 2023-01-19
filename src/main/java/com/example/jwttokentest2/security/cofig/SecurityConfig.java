@@ -1,5 +1,6 @@
 package com.example.jwttokentest2.security.cofig;
 
+import com.example.jwttokentest2.security.jwt.JwtAccessDeniedHandler;
 import com.example.jwttokentest2.security.jwt.JwtAuthenticationFilter;
 import com.example.jwttokentest2.security.jwt.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private final JwtExceptionFilter jwtExceptionFilter;
+
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     /**
      * 비밀번호 암호화
@@ -77,6 +80,8 @@ public class SecurityConfig {
 
         http.addFilterBefore(jwtExceptionFilter,
                         JwtAuthenticationFilter.class);
+
+        http.exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler);
 
         return http.build();
     }

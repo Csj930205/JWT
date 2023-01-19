@@ -19,5 +19,4 @@ public enum RoleEnum {
         public static final String 일반 = "USER";
         public static final String 소셜 = "SOCIAL";
     }
-
 }

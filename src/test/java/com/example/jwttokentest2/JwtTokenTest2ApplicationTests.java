@@ -24,11 +24,11 @@ class JwtTokenTest2ApplicationTests {
 
     @Test
     void userInsert() {
-        String id = "tjdwns92";
+        String id = "tjdwns133";
         String pw = new BCryptPasswordEncoder().encode("1234");
-        String email = "sjchoi@naver.com";
+        String email = "sjchoi11@naver.com";
         String name = "소셜";
-        String role = "ROLE_SOCIAL";
+        String role = "SOCIAL";
 
         User user = User.builder()
                 .userId(id)
