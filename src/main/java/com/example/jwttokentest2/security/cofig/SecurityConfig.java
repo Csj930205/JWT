@@ -3,6 +3,7 @@ package com.example.jwttokentest2.security.cofig;
 import com.example.jwttokentest2.security.jwt.JwtAccessDeniedHandler;
 import com.example.jwttokentest2.security.jwt.JwtAuthenticationFilter;
 import com.example.jwttokentest2.security.jwt.JwtExceptionFilter;
+import com.example.jwttokentest2.security.jwt.JwtLogoutSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,8 @@ public class SecurityConfig {
     private final JwtExceptionFilter jwtExceptionFilter;
 
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+    private final JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
 
     /**
      * 비밀번호 암호화
@@ -63,12 +66,15 @@ public class SecurityConfig {
 
         http.formLogin().disable();
 
+        http
+                .logout()
+                .logoutUrl("/api/logout")
+                .logoutSuccessHandler(jwtLogoutSuccessHandler)
+                .permitAll();
+
         http.authorizeHttpRequests(
                 auth -> auth
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/test/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/**").permitAll()
-
                 );
 
 

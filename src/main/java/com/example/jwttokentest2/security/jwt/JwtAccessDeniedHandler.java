@@ -1,10 +1,8 @@
 package com.example.jwttokentest2.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,12 +17,12 @@ import java.util.Map;
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         setErrorResponse(response, "권한이 없습니다.");
     }
 
     /**
-     * Error 핸들
+     * AccessDenied Handler
      * @param response
      * @param message
      * @throws IOException
@@ -34,7 +32,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
         Map<String, Object> body = new HashMap<>();
         body.put("result", "fail");
-        body.put("code", HttpStatus.BAD_REQUEST.value());
+        body.put("code", HttpStatus.FORBIDDEN.value());
         body.put("message", message);
 
         ObjectMapper mapper = new ObjectMapper();
